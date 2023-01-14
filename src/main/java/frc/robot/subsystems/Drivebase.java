@@ -13,9 +13,14 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.I2C.Port;
+
 public class Drivebase extends SubsystemBase {
   /** Creates a new Drivebase. */
-  public Drivebase() {}
+  public Drivebase() {
+    m_rightMaster.setInverted(true);
+  }
 
   CANSparkMax m_leftMotor1 = new CANSparkMax(1, MotorType.kBrushed);
   CANSparkMax m_leftMotor2 = new CANSparkMax(1, MotorType.kBrushed);
@@ -28,11 +33,13 @@ public class Drivebase extends SubsystemBase {
   MotorControllerGroup m_leftMaster = new MotorControllerGroup(m_leftMotor1, m_leftMotor2, m_leftMotor3);
   MotorControllerGroup m_rightMaster = new MotorControllerGroup(m_rightMotor1, m_rightMotor2, m_rightMotor3);
 
+  
+
   DifferentialDrive m_diffDrive = new DifferentialDrive(m_leftMaster, m_rightMaster);
 
 
-  AHRS m_gyro = new AHRS();
-  
+  AHRS m_gyro = new AHRS(Port.kMXP);
+
   /**
    * Example command factory method.
    *
@@ -56,6 +63,24 @@ public class Drivebase extends SubsystemBase {
         });
   }
 
+  public CommandBase getZAngle() {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return boolean run(
+        () -> {
+          return m_gryo.getAngle();
+        });
+  }
+
+  public CommandBase callibrate() {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return void runOnce(
+        () -> {
+          m_gryo.callibrate();
+        });
+  }
+
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *
@@ -76,7 +101,8 @@ public class Drivebase extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.puNumber("Z ANfgle", m_gyro.getAngle());
+
   }
 
   @Override

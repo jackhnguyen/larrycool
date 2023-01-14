@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -31,7 +32,14 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    m_db.setDefaultCommand(new XboxControllerDrive(m_db, m_driverController.getLeftY(), m_driverController.getRightX()));
+   
+
+    //Use this instead of making a command class. Much simplier than making commands. "run" runs indefinitely and "runOnce" s of course once lol
+    m_db.setDefaultCommand(
+    Command.run(() -> {
+      m_db.arcadeDrive(m_driverController.getLeftY(), m_driverController.getRightX());
+    }, m_db));
+    
     // Configure the trigger bindings
     configureBindings();
   }
